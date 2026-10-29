@@ -1,0 +1,16 @@
+{
+  "name": "gobal",
+  "description": "GoBal (狗宝) plugin marketplace",
+  "owner": {
+    "name": "4ward2",
+    "url": "https://github.com/4ward2/GoBal"
+  },
+  "plugins": [
+    {
+      "name": "android-remote-control",
+      "description": "Channel plugin for GoBal (狗宝) — receives device events and pushes them into Claude Code sessions. Derived from Android Remote Control MCP (MIT).",
+      "source": "./channel-plugin",
+      "category": "productivity"
+    }
+  ]
+}

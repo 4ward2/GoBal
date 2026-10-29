@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_files_title">文件</string>
+    <string name="remote_files_tab_files">文件</string>
+    <string name="remote_files_tab_changes">改动</string>
+    <string name="remote_files_no_changes">没有改动</string>
+    <string name="remote_files_close">关闭</string>
+    <string name="remote_files_error_unknown">未知错误</string>
+    <string name="remote_files_entry_info">%1$s · %2$s</string>
+    <string name="remote_files_folder">文件夹</string>
+    <string name="remote_files_file">文件</string>
+</resources>

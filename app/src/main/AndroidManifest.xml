@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Network -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Foreground services -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- Boot receiver -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Held for seconds at a time, while a heartbeat is sent or a message is taken in -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Lets the app ask (the user decides) to be left alone by battery optimisation -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Notifications (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- App Management -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+
+    <!-- Camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Chromium WebView getUserMedia requires both RECORD_AUDIO and MODIFY_AUDIO_SETTINGS -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- Location (background-location is geofence-only → declared in the gms flavor manifest) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- WiFi (Event Channel) -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.NEARBY_WIFI_DEVICES" />
+
+    <!-- Bluetooth (Event Channel) -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- Foreground service type for Event Channel (location for geofence/WiFi) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- Media read access (optional — enables "all files" mode for built-in storage locations) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+
+        <!-- 解锁态把唤醒辉光挂成穿透式悬浮窗，触摸才能落到下层应用。
+         用户未授予时自动回退到 Activity（见 VoiceWakeActivity.shouldDelegateToOverlay）。 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- Verification-code autofill: read incoming SMS codes (optional; notifications are the fallback) -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+<application
+        android:name=".McpApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.AndroidRemoteControlMcp"
+        tools:targetApi="34">
+
+        <!-- Main Activity -->
+        <!-- Long-press POWER overlay. Reached via the ASSISTANT role
+             (settings global power_button_long_press=5), not the old Magisk
+             getevent watcher: forcing power_button_long_press=0 left POWER
+             without a SingleKey rule, which killed wake-from-doze. Must stay exported. -->
+        <activity
+            android:name=".ui.VoiceWakeActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:taskAffinity=""
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.VoiceWakeOverlay">
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".services.wake.VoiceWakeOverlayService"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.AndroidRemoteControlMcp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Share Target (receives content shared INTO the app via the Android share sheet) -->
+        <activity
+            android:name=".ui.ShareReceiverActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:label="@string/share_target_label"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Lets other apps open or receive chat attachments (files/attachments) -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- MCP Server Foreground Service -->
+        <service
+            android:name=".services.mcp.McpServerService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="MCP server providing remote device control" />
+        </service>
+
+        <!-- Embedded llama.cpp model server: keeps the app alive while the model runs -->
+        <service
+            android:name=".services.localmodel.LocalModelService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="On-device language model server for the assistant" />
+        </service>
+
+        <!-- In-app phone agent: keeps the app alive while a task runs and shows its progress -->
+        <service
+            android:name=".services.agent.AgentService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Assistant operating apps on the user's behalf, with progress and a stop button" />
+        </service>
+
+        <receiver
+            android:name=".services.agent.AgentActionReceiver"
+            android:exported="false" />
+
+        <!-- Local HTTP for phones with the root helper (PhoneMCP wake / chat / status) -->
+        <service
+            android:name=".services.chat.ChatHttpService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Local chat UI HTTP server for on-device assistant" />
+        </service>
+
+        <!-- Accessibility Service -->
+        <service
+            android:name=".services.accessibility.McpAccessibilityService"
+            android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- Notification Listener Service -->
+        <service
+            android:name=".services.notifications.McpNotificationListenerService"
+            android:exported="false"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Boot Completed Receiver -->
+        <receiver
+            android:name=".services.mcp.BootCompletedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- ADB Configuration Receiver (headless setup via adb shell am broadcast).
+             The sender must hold DUMP, which the shell and the system do and no installed app
+             does: without it any app could set the token, bind to the network and start the server. -->
+        <receiver
+            android:name=".services.mcp.AdbConfigReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+        </receiver>
+
+        <!-- Present only while the app is asked to stay connected to paired computers or channels -->
+        <service
+            android:name=".services.link.OnlineService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keeps the user's paired computers and message channels connected" />
+        </service>
+
+        <receiver
+            android:name=".services.link.LinkTickReceiver"
+            android:exported="false" />
+
+        <!-- Lives for the minutes of a wireless-debugging pairing; the code is typed into its notification -->
+        <service
+            android:name=".services.shell.ShellPairingService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Waits for the phone's wireless debugging pairing page while the user is in system settings" />
+        </service>
+
+        <!-- Shows what the agent's guards make of the screen; only the shell holds DUMP -->
+        <receiver
+            android:name=".debug.GuardProbeReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+        </receiver>
+
+        <!-- Starts an agent task from adb and follows it in logcat; only the shell holds DUMP -->
+        <receiver
+            android:name=".debug.AgentTaskReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+        </receiver>
+
+        <!-- Carries the saved providers between the owner's phones over adb; only the shell holds DUMP -->
+        <receiver
+            android:name=".debug.ProviderTransferReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+        </receiver>
+
+        <!-- E2E Configuration Receiver (test configuration injection via adb shell); shell only, as above -->
+        <receiver
+            android:name=".debug.E2EConfigReceiver"
+            android:exported="true"
+            android:permission="android.permission.DUMP">
+        </receiver>
+
+        <!-- Event Channel Service -->
+        <service
+            android:name=".services.channel.EventChannelService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <!-- ADB Service Trampoline (headless start/stop via adb shell am start); shell only, like the receivers -->
+        <activity
+            android:name=".services.mcp.AdbServiceTrampolineActivity"
+            android:exported="true"
+            android:permission="android.permission.DUMP"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
+
+        <activity
+            android:name=".ui.ApprovalActivity"
+            android:exported="false"
+            android:label="@string/approval_title" />
+
+        <activity
+            android:name=".ui.AgentApprovalActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=".agent"
+            android:theme="@style/Theme.AndroidRemoteControlMcp"
+            android:label="@string/agent_approval_label" />
+
+        <activity
+            android:name=".ui.VaultApprovalActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=".vault"
+            android:label="@string/vault_approval_title" />
+
+    </application>
+
+</manifest>

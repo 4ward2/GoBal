@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_dashboard_title">仪表板</string>
+    <string name="remote_dashboard_back">返回</string>
+    <string name="remote_dashboard_section_waiting">等待确认</string>
+    <string name="remote_dashboard_section_working">运行中</string>
+    <string name="remote_dashboard_section_idle">闲置</string>
+    <string name="remote_dashboard_section_failed">失败</string>
+    <string name="remote_dashboard_section_offline">离线</string>
+    <string name="remote_dashboard_phone_source">手机</string>
+    <string name="remote_dashboard_time_now">现在</string>
+</resources>

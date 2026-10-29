@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen title -->
+    <string name="remote_connect_title">连接到电脑</string>
+
+    <!-- Tab labels -->
+    <string name="remote_connect_tab_windows">Windows</string>
+    <string name="remote_connect_tab_macos">macOS</string>
+    <string name="remote_connect_tab_linux">Linux</string>
+
+    <!-- Step headers -->
+    <string name="remote_connect_step_1_title">1. 下载 Paseo</string>
+    <string name="remote_connect_step_2_title">2. 安装</string>
+    <string name="remote_connect_step_3_title">3. 启动并配置</string>
+    <string name="remote_connect_step_4_title">4. 显示配对 QR 码</string>
+
+    <!-- Windows step content -->
+    <string name="remote_connect_windows_step_1">从 <b>paseo.sh/download</b> 或 <b>GitHub Releases</b> 下载 Paseo-Setup-x.x.x.exe</string>
+    <string name="remote_connect_windows_step_2">双击 exe 文件运行安装程序，按提示完成安装。安装后自动启动 Paseo 应用。</string>
+    <string name="remote_connect_windows_step_3">打开 Paseo。它会自动认出电脑上已经装好并登录的 Claude Code、Codex 等，不用另外添加。</string>
+    <string name="remote_connect_windows_step_4">在 Paseo 里打开「设置」，选这台电脑，在「配对设备」一栏点「配对设备」，会出现二维码和一条配对链接。</string>
+
+    <!-- macOS step content -->
+    <string name="remote_connect_macos_step_1">从 <b>paseo.sh/download</b> 或 <b>GitHub Releases</b> 下载 Paseo-x.x.x.dmg</string>
+    <string name="remote_connect_macos_step_2">双击 dmg 文件，拖 Paseo 应用到"应用程序"文件夹，然后打开。</string>
+    <string name="remote_connect_macos_step_3">打开 Paseo。它会自动认出电脑上已经装好并登录的 Claude Code、Codex 等，不用另外添加。</string>
+    <string name="remote_connect_macos_step_4">在 Paseo 里打开「设置」，选这台电脑，在「配对设备」一栏点「配对设备」，会出现二维码和一条配对链接。</string>
+
+    <!-- Linux step content -->
+    <string name="remote_connect_linux_step_1_cmd">npm install -g @getpaseo/cli</string>
+    <string name="remote_connect_linux_step_1">在终端运行上述命令安装 Paseo CLI。或从 GitHub Releases 下载预编译二进制。</string>
+    <string name="remote_connect_linux_step_2_cmd">paseo start</string>
+    <string name="remote_connect_linux_step_2">运行上述命令启动 Paseo daemon（后台运行）。</string>
+    <string name="remote_connect_linux_step_3_cmd">paseo provider ls</string>
+    <string name="remote_connect_linux_step_3">运行上述命令，看 Paseo 认出了哪些代理程序（Claude Code、Codex 要先在电脑上装好并登录）。</string>
+    <string name="remote_connect_linux_step_4_cmd">paseo pair</string>
+    <string name="remote_connect_linux_step_4">运行上述命令显示配对 QR 码和配对链接。</string>
+
+    <!-- Helper text -->
+    <string name="remote_connect_helper_copy">点击复制命令</string>
+    <string name="remote_connect_helper_copied">已复制</string>
+
+    <!-- Action buttons -->
+    <string name="remote_connect_scan_qr">扫描 QR 码</string>
+    <string name="remote_connect_paste_link">粘贴配对链接</string>
+    <string name="remote_connect_manual_address">手动输入地址</string>
+
+    <!-- Troubleshooting -->
+    <string name="remote_connect_troubleshoot_camera">扫不了？检查手机相机权限</string>
+    <string name="remote_connect_troubleshoot_link">用配对链接代替 QR 码</string>
+    <string name="remote_connect_troubleshoot_manual">如果都不行，手动输入电脑地址和端口</string>
+
+    <!-- Hints -->
+    <string name="remote_connect_hint_already_installed">已经在电脑上安装过 Paseo？直接点下面的"扫描 QR 码"或用配对链接。</string>
+    <string name="remote_connect_hint_qr_valid">二维码和配对链接不会过期，等于这台电脑的钥匙：别发到群里，也别截图外传。</string>
+    <string name="remote_connect_hint_keep_running">绑定后，电脑上的 Paseo 要一直开着；电脑睡眠或关机时，手机上会显示「不在线」。</string>
+
+    <!-- Info text -->
+    <string name="remote_connect_info_relay">默认经 Paseo 的中继（relay.paseo.sh）连接，电脑和手机不用在同一个网络。</string>
+    <string name="remote_connect_info_secure">经中继的消息是端到端加密的；「手动填写地址」的直连不加密，只能用于局域网或组网内网。</string>
+</resources>

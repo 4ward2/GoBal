@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_entry_workspaces">工作区和文件</string>
+    <string name="remote_entry_terminals">终端</string>
+    <string name="remote_entry_daemon">电脑设置</string>
+    <string name="remote_entry_manage_agent">管理这个代理</string>
+    <string name="remote_entry_guide">电脑上还没装 Paseo？看看怎么装</string>
+    <string name="remote_entry_dashboard_title">任务总览</string>
+    <string name="remote_entry_dashboard_subtitle">手机和各台电脑上所有任务的进度</string>
+</resources>

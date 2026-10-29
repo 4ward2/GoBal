@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_resume_title">中断了自动续跑</string>
+    <string name="remote_resume_on">电脑上的代理因为用量额度到了、模型繁忙、被限流或程序意外退出而停下时，等额度重置或稍等一会儿后，手机会替你发一句“接着做”。你在这期间跟它说过话、或它已经又在干活了，就不发。</string>
+    <string name="remote_resume_off">关着。电脑上的代理中断了就停在那里，等你自己处理。</string>
+    <string name="remote_resume_limits">每个代理每小时最多续跑：额度和程序退出 3 次、模型繁忙 60 次、限流 10 次，超过就不再管。手机要保持在线才能按时发出。</string>
+    <string name="remote_resume_overlap">如果电脑上还开着 quota_guard 或 Codex 满载重试，两边可能各发一句，建议只留一边。</string>
+    <string name="remote_resume_log">最近</string>
+    <string name="remote_resume_entry">%1$s · %2$s · %3$s：%4$s</string>
+    <string name="remote_resume_kind_limit">额度到了</string>
+    <string name="remote_resume_kind_busy">模型繁忙</string>
+    <string name="remote_resume_kind_rate">被限流</string>
+    <string name="remote_resume_kind_crash">程序退出</string>
+    <string name="remote_resume_scheduled">%1$s后续跑</string>
+    <string name="remote_resume_resumed">已发“接着做”</string>
+    <string name="remote_resume_gave_up">这一小时续跑太多次，不再管</string>
+    <string name="remote_resume_took_over">你已经接手，没发</string>
+    <string name="remote_resume_not_sent">没发出去（电脑不在线）</string>
+    <string name="remote_resume_seconds">%d 秒</string>
+    <string name="remote_resume_minutes">%d 分钟</string>
+    <string name="remote_resume_hours">%1$d 小时 %2$d 分钟</string>
+    <string name="remote_goal_title">目标模式</string>
+    <string name="remote_goal_none">没设目标。设了之后，它每停一轮，手机上的模型会对照达成标准检查，没达成就告诉它还差什么、让它接着做。</string>
+    <string name="remote_goal_set">设目标</string>
+    <string name="remote_goal_stop">停止</string>
+    <string name="remote_goal_nudge">让它接着做</string>
+    <string name="remote_goal_goal">目标</string>
+    <string name="remote_goal_criteria">达成标准（写清楚怎样才算做完，例如：测试全部通过并贴出结果）</string>
+    <string name="remote_goal_rounds">最多几轮</string>
+    <string name="remote_goal_hours">最多几小时</string>
+    <string name="remote_goal_start">开始</string>
+    <string name="remote_goal_cancel">取消</string>
+    <string name="remote_goal_judge_note">检查用的是小助手选的模型。会把代理每轮的最后一段回复发给这个模型。</string>
+    <string name="remote_goal_round">第 %1$d/%2$d 轮</string>
+    <string name="remote_goal_working">%1$s · 在做%2$s</string>
+    <string name="remote_goal_missing">，还差：%1$s</string>
+    <string name="remote_goal_judging">%1$s · 正在检查这一轮</string>
+    <string name="remote_goal_interrupted">%1$s · 暂停：%2$s</string>
+    <string name="remote_goal_done">达成了（用了 %1$d 轮）</string>
+    <string name="remote_goal_stopped">停了</string>
+    <string name="remote_goal_out_of_rounds">轮数用完还没达成，还差：%1$s</string>
+    <string name="remote_goal_out_of_time">时间用完还没达成</string>
+    <string name="remote_goal_failed">出错停下：%1$s</string>
+</resources>

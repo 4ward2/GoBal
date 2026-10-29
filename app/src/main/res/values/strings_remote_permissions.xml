@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_permission_deny_explain">不允许，并告诉它为什么</string>
+    <string name="remote_permission_reason_hint">比如：别动这个文件，先跟我说你的打算</string>
+    <string name="remote_permission_send">发送</string>
+</resources>

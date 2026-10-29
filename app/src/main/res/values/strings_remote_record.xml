@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_timeline_title">完整记录</string>
+    <string name="remote_timeline_refresh">刷新记录</string>
+    <string name="remote_timeline_empty">这个代理还没有做过事</string>
+    <string name="remote_timeline_open">看完整记录（工具、改动、待办）</string>
+</resources>

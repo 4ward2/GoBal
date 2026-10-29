@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_git_title">分支管理</string>
+    <string name="remote_git_refresh">刷新</string>
+    <string name="remote_git_current_branch">当前分支</string>
+    <string name="remote_git_unknown">未知</string>
+    <string name="remote_git_switch">切换</string>
+    <string name="remote_git_push">推送</string>
+    <string name="remote_git_branches">分支列表</string>
+    <string name="remote_git_search_branches">搜索分支…</string>
+    <string name="remote_git_switch_branch">切换分支</string>
+    <string name="remote_git_switch_confirm">确定要切换到分支 %s 吗？</string>
+    <string name="remote_git_worktrees">工作树</string>
+    <string name="remote_git_create_worktree">新建工作树</string>
+    <string name="remote_git_branch_name">分支名</string>
+    <string name="remote_git_delete_worktree">删除工作树</string>
+    <string name="remote_git_remote">（远程）</string>
+    <string name="remote_git_push_ask">推送到远程仓库？</string>
+    <string name="remote_git_push_hint">会把这个分支上还没推送的提交推到远程仓库，别人就能看到了。</string>
+    <string name="remote_git_archive_worktree_ask">归档这个工作树？</string>
+    <string name="remote_git_archive_worktree_hint">电脑上的工作树目录 %s 会被删除，里面没提交的改动会丢失。</string>
+</resources>

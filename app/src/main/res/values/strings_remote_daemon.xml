@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_daemon_admin_title">电脑设置</string>
+    <string name="remote_daemon_admin_back">返回</string>
+    <string name="remote_daemon_admin_relay_status">中继状态</string>
+    <string name="remote_daemon_admin_relay_on">中继已启用</string>
+    <string name="remote_daemon_admin_relay_off">中继已禁用</string>
+    <string name="remote_daemon_admin_listen_address">监听地址</string>
+    <string name="remote_daemon_admin_version">电脑端版本</string>
+    <string name="remote_daemon_admin_unknown">未知</string>
+    <string name="remote_daemon_admin_providers">服务商列表</string>
+    <string name="remote_daemon_admin_diagnose">检测</string>
+    <string name="remote_daemon_admin_refresh_providers">刷新服务商列表</string>
+    <string name="remote_daemon_admin_restart_server">重启电脑端服务</string>
+    <string name="remote_daemon_admin_ready">可以用</string>
+    <string name="remote_daemon_admin_not_ready">现在不能用，点「检测」看原因</string>
+</resources>

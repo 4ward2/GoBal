@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>GoBal 狗宝</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFF1DC"/>
+      <stop offset="1" stop-color="#FFD39B"/>
+    </linearGradient>
+    <radialGradient id="fur" cx="0.5" cy="0.36" r="0.68">
+      <stop offset="0" stop-color="#F9D7A6"/>
+      <stop offset="0.7" stop-color="#F0BE80"/>
+      <stop offset="1" stop-color="#E2A563"/>
+    </radialGradient>
+    <linearGradient id="ear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D47A2F"/>
+      <stop offset="1" stop-color="#E9A35A"/>
+    </linearGradient>
+    <radialGradient id="iris" cx="0.45" cy="0.4" r="0.6">
+      <stop offset="0" stop-color="#C27A2C"/>
+      <stop offset="1" stop-color="#6E3510"/>
+    </radialGradient>
+    <clipPath id="tile"><rect width="512" height="512" rx="116"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#tile)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+
+    <!-- chest -->
+    <path d="M96 520 C104 440 168 404 256 404 C344 404 408 440 416 520 Z" fill="#EDB777"/>
+    <path d="M196 520 C204 470 228 444 256 444 C284 444 308 470 316 520 Z" fill="#F8DDB5"/>
+
+    <!-- ears (left drawn, right mirrored) -->
+    <g id="earL">
+      <path d="M106 250 C100 186 118 128 148 88 C160 72 180 72 194 86 C222 116 242 150 252 182 Z" fill="url(#ear)"/>
+      <path d="M130 226 C128 182 142 142 162 114 C170 104 180 104 188 114 C204 138 216 160 224 182 Z" fill="#B0602A"/>
+      <path d="M146 218 C146 190 154 162 166 144 C176 160 186 180 194 198 Z" fill="#F6CF9C" opacity=".8"/>
+    </g>
+    <use href="#earL" transform="translate(512 0) scale(-1 1)"/>
+
+    <!-- head -->
+    <path d="M256 148 C334 148 398 180 414 248 C426 296 418 346 388 382 C356 418 306 432 256 432 C206 432 156 418 124 382 C94 346 86 296 98 248 C114 180 178 148 256 148 Z" fill="url(#fur)"/>
+
+    <!-- forehead groove -->
+    <path d="M256 162 C251 190 251 214 256 238" stroke="#DE9F59" stroke-width="6" fill="none" stroke-linecap="round" opacity=".55"/>
+
+    <!-- cheeks -->
+    <ellipse cx="164" cy="326" rx="50" ry="40" fill="#FBE3BF"/>
+    <ellipse cx="348" cy="326" rx="50" ry="40" fill="#FBE3BF"/>
+
+    <!-- eyebrow spots -->
+    <ellipse cx="194" cy="234" rx="17" ry="9" fill="#FCE6C4"/>
+    <ellipse cx="318" cy="234" rx="17" ry="9" fill="#FCE6C4"/>
+
+    <!-- muzzle -->
+    <path d="M256 270 C302 270 334 302 336 342 C338 384 302 408 256 408 C210 408 174 384 176 342 C178 302 210 270 256 270 Z" fill="#FCEBD2"/>
+    <path d="M256 318 C292 318 314 336 314 358 C314 384 288 398 256 398 C224 398 198 384 198 358 C198 336 220 318 256 318 Z" fill="#D8C6B4" opacity=".6"/>
+
+    <!-- eyes -->
+    <g id="eyeL">
+      <path d="M170 272 C176 256 192 250 206 254 C214 258 218 266 218 272 C210 284 192 288 178 282 C174 280 171 276 170 272 Z" fill="#26170D"/>
+      <circle cx="195" cy="269" r="12.5" fill="url(#iris)"/>
+      <circle cx="194" cy="271" r="7" fill="#170D07"/>
+      <circle cx="200" cy="263" r="4.5" fill="#FFFFFF"/>
+    </g>
+    <g>
+      <path d="M342 272 C336 256 320 250 306 254 C298 258 294 266 294 272 C302 284 320 288 334 282 C338 280 341 276 342 272 Z" fill="#26170D"/>
+      <circle cx="317" cy="269" r="12.5" fill="url(#iris)"/>
+      <circle cx="318" cy="271" r="7" fill="#170D07"/>
+      <circle cx="324" cy="263" r="4.5" fill="#FFFFFF"/>
+    </g>
+
+    <!-- nose -->
+    <path d="M256 300 C282 300 298 309 298 324 C298 342 277 355 256 355 C235 355 214 342 214 324 C214 309 230 300 256 300 Z" fill="#2A2220"/>
+    <ellipse cx="244" cy="312" rx="13" ry="5.5" fill="#FFFFFF" opacity=".32"/>
+
+    <!-- mouth -->
+    <path d="M256 355 L256 370 M256 370 C246 385 226 387 213 376 M256 370 C266 385 286 387 299 376" stroke="#3A2A22" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

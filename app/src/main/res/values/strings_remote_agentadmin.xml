@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen title -->
+    <string name="remote_agentadmin_title">代理详情</string>
+
+    <!-- Section labels -->
+    <string name="remote_agentadmin_provider">代理程序</string>
+    <string name="remote_agentadmin_model">模型</string>
+    <string name="remote_agentadmin_mode">工作模式</string>
+    <string name="remote_agentadmin_status">状态</string>
+    <string name="remote_agentadmin_cwd">工作目录</string>
+
+    <!-- Action buttons -->
+    <string name="remote_agentadmin_refresh">刷新</string>
+    <string name="remote_agentadmin_archive">归档</string>
+    <string name="remote_agentadmin_resume">恢复</string>
+    <string name="remote_agentadmin_delete">删除</string>
+    <string name="remote_agentadmin_retry">重试</string>
+
+    <!-- Edit title -->
+    <string name="remote_agentadmin_edit_title">编辑名称</string>
+    <string name="remote_agentadmin_save">保存</string>
+    <string name="remote_agentadmin_cancel">取消</string>
+
+    <!-- Confirmations -->
+    <string name="remote_agentadmin_delete_confirm_title">删除代理？</string>
+    <string name="remote_agentadmin_delete_confirm_body">删除后无法恢复。确定要删除此代理吗？</string>
+
+    <string name="remote_agentadmin_archive_confirm_title">归档代理？</string>
+    <string name="remote_agentadmin_archive_confirm_body">归档后，代理不会出现在列表中，但可以随时恢复。</string>
+
+    <string name="remote_agentadmin_resume_confirm_title">恢复代理？</string>
+    <string name="remote_agentadmin_resume_confirm_body">恢复此代理吗？它将再次出现在列表中。</string>
+
+    <!-- Edit title fields -->
+    <string name="remote_agentadmin_title_label">名称</string>
+    <string name="remote_agentadmin_select_placeholder">选择…</string>
+
+    <!-- Error messages -->
+    <string name="remote_agentadmin_error_not_found">找不到代理</string>
+    <string name="remote_agentadmin_error_load_failed">加载代理失败</string>
+</resources>

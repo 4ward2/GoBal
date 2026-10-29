@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- See data_extraction_rules.xml: vault files are bound to a non-exportable Keystore key. -->
+<full-backup-content>
+    <exclude domain="file" path="vault/" />
+        <exclude domain="file" path="remote/" />
+        <exclude domain="file" path="im/" />
+        <exclude domain="file" path="shell/" />
+</full-backup-content>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_workspaces_title">工作区</string>
+    <string name="remote_workspaces_loading">加载中…</string>
+    <string name="remote_workspaces_empty">这台电脑上还没有工作区</string>
+    <string name="remote_workspaces_error">出错了：%s</string>
+    <string name="remote_workspaces_scripts">脚本</string>
+    <string name="remote_workspaces_open_folder">文件和改动</string>
+    <string name="remote_workspaces_open_git">分支和工作树</string>
+    <string name="remote_workspaces_open_terminals">终端</string>
+    <string name="remote_workspaces_archive">归档</string>
+    <string name="remote_workspaces_archive_ask">归档工作区「%s」？</string>
+    <string name="remote_workspaces_archive_hint">上面的代理和终端会一起归档。如果它是 Paseo 建的工作树，电脑上的这个工作树目录也会被删除。</string>
+    <string name="remote_workspaces_run_script">运行脚本「%s」</string>
+    <string name="remote_workspaces_no_port">没有端口</string>
+    <string name="remote_workspaces_branch">分支 %1$s · %2$s</string>
+    <string name="remote_workspaces_back">返回</string>
+</resources>

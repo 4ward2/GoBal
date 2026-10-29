@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_timeline_user">用户</string>
+    <string name="remote_timeline_assistant">助手</string>
+    <string name="remote_timeline_reasoning">思考过程</string>
+    <string name="remote_timeline_todo">待办清单</string>
+    <string name="remote_timeline_error">错误</string>
+    <string name="remote_timeline_notification">通知</string>
+    <string name="remote_timeline_compaction">消息合并</string>
+    <string name="remote_timeline_plugin">插件</string>
+    <string name="remote_timeline_status_running">运行中</string>
+    <string name="remote_timeline_status_completed">已完成</string>
+    <string name="remote_timeline_status_failed">失败</string>
+    <string name="remote_timeline_status_canceled">已取消</string>
+    <string name="remote_timeline_todo_pending">待办</string>
+    <string name="remote_timeline_todo_completed">已完成</string>
+</resources>
