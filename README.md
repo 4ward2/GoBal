@@ -1,502 +1,154 @@
 <p align="center"><img src="art/gobal-icon.svg" width="120" alt="GoBal 狗宝"></p>
 
-# GoBal（狗宝）
-
-[![CI](https://github.com/4ward2/GoBal/actions/workflows/ci.yml/badge.svg)](https://github.com/4ward2/GoBal/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
-
-**GoBal（狗宝）是一个免 root 的安卓手机 GUI Agent。** 它通过无障碍树操作任意 App，端侧和云端模型全兼容，面向各年龄群体。
-
-- 手机端自带对话和 Agent 界面，可以直接用语音或文字下达任务。
-- 自研树状上下文结构，引导 Agent 把执行过的操作固化成脚本来提速；支持人工录制、回放、编排脚本，支持多规则匹配。
-- llama.cpp 内嵌进 App，可以完全离线运行端侧模型；也可以接入任意云端模型。
-- 手机端同时是一个 MCP 服务，并实现了 Paseo 协议的端到端加密客户端，扫码就能和电脑上的 Claude Code / Codex 互联。
-- 私密凭据由手机端保险箱管理，不会发给模型。
-
-GoBal is a no-root Android GUI agent: it operates any app through the accessibility tree, works with on-device and cloud models, turns executed actions into replayable scripts, and doubles as an MCP server.
-
-## 构建 / Build
-
-- Use **JDK 17** and clone with `git clone --recurse-submodules https://github.com/4ward2/GoBal.git`.
-- Follow [CONTRIBUTING.md](CONTRIBUTING.md) for Android SDK and native tunnel dependencies.
-- Run `python scripts/fetch_sherpa_onnx.py` before building to download and verify the
-  pinned speech runtime from its upstream release. English/Chinese OCR data is included.
-  Sources, SHA-256 checksums, and license texts are listed in
-  [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
-- Wireless ADB pairing additionally needs `libadbpairing.so`, built with
-  [scripts/build-adb-pairing.sh](scripts/build-adb-pairing.sh) using the Android NDK
-  and the BoringSSL prefab AAR described in that script. Generated JNI libraries are gitignored.
-- Supply your own model-provider credentials through the app. Signing keys, local SDK
-  settings, environment secrets, chat screenshots, and developer logs are not distributed.
-
-## 项目来源 / Origins
-
-GoBal 的 MCP 服务端和无障碍控制底层源自 [Android Remote Control MCP](https://github.com/danielealbano/android-remote-control-mcp)（作者 Daniele Salvatore Albano，MIT 许可）。上游的版权声明保留在 [LICENSE.md](LICENSE.md) 中，第三方组件见 [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)。GoBal 在此基础上新增了手机端对话与 Agent、长任务上下文树与脚本固化、语音、端侧模型、Paseo 加密互联和凭据保险箱等功能。
-
-The MCP server and accessibility-control foundation come from Android Remote Control MCP by Daniele Salvatore Albano (MIT). Its copyright notice is preserved in LICENSE.md.
-
----
-
-## 沿用自上游的 MCP 功能参考 / Upstream MCP feature reference
-
-The sections below are inherited from the upstream project and describe the MCP server part of GoBal; they do not document every GoBal addition.
-
-An Android application that runs as an **MCP (Model Context Protocol) server**, enabling AI models to **fully control an Android device** remotely using accessibility services and screenshot capture.
-
-The app runs directly on your Android device (or emulator) and exposes an HTTP server (with optional HTTPS) implementing the MCP protocol. AI models like Claude can connect to it and interact with any app on the device — reading UI elements, tapping buttons, typing text, swiping, capturing screenshots, managing files, launching apps, and more.
-
-> **Warning:** This software is provided "as-is" without warranty of any kind, for **research and educational purposes only**. The authors do not condone the use of this tool for any illegal, unauthorized, or unethical activities. Users are solely responsible for ensuring their use complies with all applicable laws and regulations. By using this software, you agree to use it responsibly and at your own risk.
-
----
-
-## Demo
+<h1 align="center">GoBal（狗宝）</h1>
 
 <p align="center">
-  <img src="docs/assets/demo.gif" alt="Demo of an AI model controlling an Android device through the MCP server" width="720">
+  免 root 的安卓手机 GUI Agent：说一句话，它替你在手机上把事办完。
 </p>
 
-<p align="center"><em>An AI model controlling an Android device through the MCP server (sped up).</em></p>
+<p align="center">
+  <a href="https://github.com/4ward2/GoBal/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/4ward2/GoBal/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE.md"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+  <img alt="Android 10+" src="https://img.shields.io/badge/Android-10%2B-3ddc84">
+</p>
 
-## Features
-
-### MCP Server
-- HTTP server running directly on Android (Ktor + Netty), with optional HTTPS
-- Streamable HTTP transport at `/mcp` (MCP specification compliant, JSON-only, no SSE)
-- Combined authentication: static bearer token and/or a self-contained OAuth 2.1 server (Claude.ai / Claude Desktop custom connectors, with on-device approval)
-- Auto-generated self-signed TLS certificates (or custom certificate upload)
-- Configurable binding: localhost (127.0.0.1) or network (0.0.0.0)
-- Auto-start on boot
-- Remote access tunnels via Cloudflare Quick Tunnels or ngrok (public HTTPS URL)
-
-### 56 MCP Tools across 13 Categories
-
-Screen introspection, system actions, touch actions, gestures, node actions, text input, utilities, file operations, app management, camera, intents, notifications, and location.
-
-All tool names use the `android_` prefix by default (e.g., `android_tap`). When a device slug is configured (e.g., `pixel7`), the prefix becomes `android_pixel7_` (e.g., `android_pixel7_tap`).
-
-See [docs/MCP_TOOLS.md](docs/MCP_TOOLS.md) for the full tool reference with input/output schemas and examples.
-
-### Android App
-- Material Design 3 UI with tabbed layout (Server / Settings / About) and dark mode
-- Server status monitoring (running/stopped) with permission warning banner
-- Connection info display (IP, port, token, tunnel URL)
-- Per-tool and per-parameter permissions (enable/disable individual MCP tools)
-- Permission management (Accessibility, Notifications, Camera, Microphone)
-- Remote access tunnel configuration (Cloudflare / ngrok)
-- Storage location management (automatic locations + SAF authorization for file tools)
-- Server log viewer (MCP tool calls, tunnel events)
-- Headless setup via ADB (configure, grant permissions, start/stop server without UI)
-
-### Comparison with Alternatives
-
-| Feature | This project | [mobile-mcp] | [Android-MCP] | [android-mcp-server] | [adb-mcp] | [droidrun-mcp] |
-|---------|:-:|:-:|:-:|:-:|:-:|:-:|
-| MCP tools | 56 | 21 | 11 | 5 | 10 | 11 |
-| Runs on the phone (no ADB) | :white_check_mark: | :x: | :x: | :x: | :x: | :x: |
-| Action latency | 10-100 ms | 1-4 s | 1-4 s | 1-4 s | 1-4 s | 1-4 s |
-| Works over the internet | :white_check_mark: | :x: | :x: | :x: | :x: | :x: |
-| Token-efficient screen state | :white_check_mark: | :x: | :white_check_mark: | :x: | :x: | :white_check_mark: |
-| Annotated screenshots | :white_check_mark: | :x: | :white_check_mark: | :x: | :x: | :x: |
-| Configurable screenshot resolution/quality | :white_check_mark: | :x: | :x: | :x: | :x: | :x: |
-| Per-tool enable/disable | :white_check_mark: | :x: | :x: | :x: | :x: | :x: |
-| Multi-device support | :white_check_mark: | :white_check_mark: | :x: | :x: | :x: | :x: |
-| Camera, clipboard, files, downloads | :white_check_mark: | :x: | :x: | :x: | :x: | :x: |
-| iOS support | :x: | :white_check_mark: | :x: | :x: | :x: | :x: |
-
-[mobile-mcp]: https://github.com/mobile-next/mobile-mcp
-[Android-MCP]: https://github.com/CursorTouch/Android-MCP
-[android-mcp-server]: https://github.com/minhalvp/android-mcp-server
-[adb-mcp]: https://github.com/srmorete/adb-mcp
-[droidrun-mcp]: https://github.com/chukfinley/droidrun-mcp-server
-
-Most alternatives rely on ADB running on a host machine, which means a USB cable or local network connection and a computer sitting next to the phone. This project runs entirely on the device itself, so you can expose the MCP endpoint through a tunnel and control your phone from anywhere.
-
-On the token efficiency side, ADB-based tools typically return raw `uiautomator` XML dumps which can easily be 10-50x more verbose than the compact representation used here. Combined with numbered screenshot annotations, configurable image quality, and the ability to disable tools you don't need (every tool definition costs tokens on every turn), this significantly reduces the per-interaction cost in agentic loops.
+<p align="center"><b>中文</b> · <a href="#english">English</a></p>
 
 ---
 
-## Install
+## 为什么做狗宝
 
-### Option A: Download on your phone (easiest)
+手机上的很多事并不难，只是步骤多、界面绕：比价下单、查快递、填表、找一条旧聊天记录。对不熟悉智能手机的人来说，每一步都可能卡住；对熟练的人来说，重复操作也很耗时间。
 
-1. Open the [Releases](https://github.com/4ward2/GoBal/releases) page on your phone's browser
-2. Download the APK from the latest release
-3. Open the downloaded APK and follow the prompts to install it (you may need to allow installation from unknown sources)
+狗宝直接“看”手机屏幕的无障碍树，像人一样点按、输入、滑动，把一句自然语言变成一串真实的操作。它不需要 root，不需要被操作的 App 做任何适配，面向各年龄群体。
 
-### Option B: Download on your PC and install via ADB
+## 它能做什么
 
-1. Download the APK from the [Releases](https://github.com/4ward2/GoBal/releases) page
-2. Connect your phone via USB (with USB Debugging enabled)
-3. Install the APK:
-```bash
-adb install app-release.apk
+**手机 Agent**
+- 读懂当前界面并操作任意 App：点击、输入、滑动、返回、切换应用。
+- 长任务用**树状上下文**管理：把大任务拆成子任务逐个推进，搜索型任务会记录已经看过的分支，避免原地打转或编造结果。
+- 内置守卫：遇到付款下单、验证码和登录会停下来交给你本人处理；只操作你在设置里授权过的 App。
+
+**脚本：越用越快**
+- Agent 成功完成过的操作，会被**固化成脚本**；同类任务再来时直接回放，不必每一步都问模型。
+- 也可以**人工录制**：在手机上演示一遍，狗宝记下每一步，之后可以回放、修改、拼接编排。
+- 回放时按**多种规则匹配**目标：文字、OCR 识别结果、图像特征、屏幕签名，界面小改版也能找到对的按钮。
+
+**模型：端侧和云端都能用**
+- 云端预置 OpenAI、Anthropic、DeepSeek、Gemini、通义千问、智谱、Kimi、硅基流动、OpenRouter，也可以填任意 OpenAI 兼容接口。
+- 端侧内嵌 llama.cpp，可在手机上直接下载、运行 GGUF 模型，完全离线工作。
+
+**对话、语音与记忆**
+- 手机端自带对话界面，会话本地保存，可编辑、导出、带附件。
+- 通话式语音交互：本地语音识别、语音合成、回声抑制，可以像打电话一样跟狗宝说话。
+- 记忆库：可以导入文档和图片（含 OCR），让 Agent 记住你的偏好和常用信息。
+
+**隐私保险箱**
+- 手机号、地址、证件号等私密信息存在加密保险箱里，Agent 只看到占位符，真实内容不会发给模型；需要填写时再经你批准。
+- 支持用语音录入数字和中文数字，自动校正。
+
+**和电脑上的 Agent 联动**
+- 狗宝同时是一个 **MCP 服务**：电脑上的 Claude Code、Codex 等可以通过 MCP 直接操控这台手机。
+- 实现了 [Paseo](https://github.com/getpaseo/paseo) 协议的**端到端加密客户端**：扫码配对后，在手机上就能查看和指挥电脑上的编程 Agent。
+- 支持 Cloudflare Tunnel / ngrok 隧道，手机不在同一局域网也能连。
+
+**生活小助手**
+- 自动读取短信验证码并填入当前输入框。
+- 自动跳过 App 的开屏广告。
+- 角色卡：给狗宝换个性格和说话风格。
+
+## 架构一览
+
+```mermaid
+flowchart LR
+  subgraph Phone["手机：GoBal App"]
+    UI["对话 / 语音界面"] --> Agent["Agent<br/>任务树 · 守卫"]
+    Agent --> A11y["无障碍操作 · 截图"]
+    Agent <--> Scripts["脚本库<br/>录制 · 回放 · 编排 · 多规则匹配"]
+    Agent --> Router["模型路由"]
+    Router --> Cloud["云端 API"]
+    Router --> Local["端侧 llama.cpp（GGUF）"]
+    Agent <--> Vault["隐私保险箱<br/>加密 · 占位脱敏 · 使用审批"]
+    MCP["MCP 服务"] --> A11y
+    Paseo["Paseo 端到端加密客户端"]
+  end
+  Desktop["电脑上的 Claude Code / Codex"] --> MCP
+  Paseo <--> Relay["Paseo 中继"] <--> Daemon["电脑上的 Paseo daemon"]
 ```
 
-### Option C: Build from sources
+## 快速开始
+
+### 安装
+
+正式安装包会发布在 [Releases](https://github.com/4ward2/GoBal/releases)。在那之前，请按下面的步骤从源码构建。
+
+系统要求：Android 10（API 29）及以上。
+
+### 从源码构建
 
 ```bash
 git clone --recurse-submodules https://github.com/4ward2/GoBal.git
 cd GoBal
-make build
-make install  # installs on connected device/emulator
+python scripts/fetch_sherpa_onnx.py   # 下载并校验固定版本的语音运行时
+./gradlew assembleDebug
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for full build requirements and instructions.
+- 需要 **JDK 17** 和 Android SDK；隧道相关的原生依赖见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+- 中英文 OCR 数据已经包含在仓库里。所有第三方组件的来源、SHA-256 和许可证见 [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)。
+- 无线 ADB 配对还需要 `libadbpairing.so`，用 [scripts/build-adb-pairing.sh](scripts/build-adb-pairing.sh) 配合 Android NDK 构建；生成的 JNI 库不进仓库。
+- 签名请使用你自己的 keystore，模板见 `keystore.properties.example`。
+
+### 第一次使用
+
+1. 打开狗宝，按提示开启**无障碍服务**和**屏幕截取**权限（每项权限的用途见 [docs/PERMISSIONS.md](docs/PERMISSIONS.md)）。
+2. 在设置里选择模型：填入任一云端服务的 API Key，或者下载一个端侧 GGUF 模型。
+3. 在对话框里说出你的需求，比如“帮我看看今天的快递到哪了”。
+
+### 让电脑上的 Agent 控制手机
+
+- **MCP**：在狗宝里打开 MCP 服务，把显示的地址和令牌填进 Claude Code / Codex 的 MCP 配置。工具清单见 [docs/MCP_TOOLS.md](docs/MCP_TOOLS.md)。
+- **Paseo**：在电脑上运行 Paseo，用狗宝扫描配对二维码，即可通过加密中继互联。
+
+## 隐私与安全
+
+- 狗宝能看到并操作你手机上的界面，请只在你信任的模型服务和设备上使用。
+- 保险箱里的私密信息以加密形式保存在本机，发给模型的内容会先替换成占位符。
+- 签名密钥、开发日志、聊天截图和任何个人凭据都不包含在本仓库中；请通过 App 自行配置 API Key。
+- 付款下单、验证码和登录由你本人完成，狗宝不会代劳。请遵守所操作 App 的服务条款。
+
+## 文档
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)：MCP 服务端的整体结构
+- [docs/MCP_TOOLS.md](docs/MCP_TOOLS.md)：MCP 工具清单
+- [docs/PERMISSIONS.md](docs/PERMISSIONS.md)：权限说明
+
+## 项目状态
+
+狗宝处于早期开发阶段（0.1），接口和界面仍会调整。欢迎在 [Issues](https://github.com/4ward2/GoBal/issues) 反馈问题和想法。
+
+## 来源与许可
+
+狗宝以 MIT 许可发布，见 [LICENSE.md](LICENSE.md)。
+
+狗宝的 MCP 服务端和无障碍控制底层源自 Daniele Salvatore Albano 的 [Android Remote Control MCP](https://github.com/danielealbano/android-remote-control-mcp)（MIT），其版权声明保留在 LICENSE.md 中。在此基础上，狗宝新增了手机端对话与 Agent、任务树与脚本系统、端侧模型、语音、隐私保险箱、Paseo 加密互联等功能。其余第三方组件见 [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)。
+
+本软件按“现状”提供，不附带任何担保。使用者需自行确保使用方式符合法律法规和相关平台的规定。
 
 ---
 
-## Setup
+<a id="english"></a>
 
-1. **Open the app** and go to Settings > Permissions
-2. **Enable Accessibility Service** (required for UI introspection, actions, and screenshots)
-3. **Grant additional permissions** as needed (Camera, Microphone, Location, Notifications)
-4. **Configure storage locations** in Settings > Storage if you plan to use file tools (includes automatic locations like Downloads, plus custom locations via SAF)
-5. Go back to the **Server tab** and tap **Start** to start the MCP server
+## English
 
-The server starts on `http://127.0.0.1:8080` by default. The connection info (IP, port, token, URL) is displayed on the Server tab.
+**GoBal (狗宝)** is a no-root Android GUI agent. It reads the accessibility tree and taps, types and swipes like a person, turning one sentence into real actions in any app.
 
-> **Note**: `127.0.0.1` refers to the phone's localhost, not your computer. To connect from your computer, use [adb port forwarding](#using-with-adb-port-forwarding), bind to `0.0.0.0` (network mode), or enable a [remote access tunnel](#using-remote-access-tunnels).
+- **Agent:** long tasks are managed as a task tree; search-style tasks remember explored branches so the agent neither loops nor invents results. Guards hand payments, captchas and logins back to you, and only apps you have allowed are touched.
+- **Scripts:** actions the agent completed are turned into replayable scripts. You can also record a demonstration yourself, then replay, edit and compose scripts. Targets are matched by text, OCR, image features and screen signatures.
+- **Models:** presets for OpenAI, Anthropic, DeepSeek, Gemini, Qwen, Zhipu, Kimi, SiliconFlow and OpenRouter, any OpenAI-compatible endpoint, or fully offline GGUF models through embedded llama.cpp.
+- **Voice and memory:** a call-style voice mode with on-device STT, TTS and echo suppression; a memory library fed by documents and OCR.
+- **Privacy vault:** personal data is stored encrypted and shown to the model only as placeholders; filling it in needs your approval.
+- **Desktop agents:** GoBal is also an MCP server for Claude Code / Codex, and an end-to-end-encrypted [Paseo](https://github.com/getpaseo/paseo) client.
 
-### Permissions Reference
+Build with JDK 17: `git clone --recurse-submodules https://github.com/4ward2/GoBal.git`, run `python scripts/fetch_sherpa_onnx.py`, then `./gradlew assembleDebug`. Requires Android 10+.
 
-The app declares the permissions below. **Normal** permissions are granted automatically at install. **Runtime** permissions and **Special access** require explicit user action (via the app's Settings > Permissions tab, or programmatically — see [Granting Permissions Programmatically](docs/PERMISSIONS.md)). All runtime permissions are optional: the app works without them, but the features that depend on them are disabled until granted.
-
-| Permission | Type | Used for |
-|------------|------|----------|
-| `INTERNET` | Normal | HTTP/HTTPS server and remote access tunnels |
-| `ACCESS_NETWORK_STATE` | Normal | Detect network connectivity |
-| `FOREGROUND_SERVICE` | Normal | Run the MCP server as a foreground service |
-| `FOREGROUND_SERVICE_SPECIAL_USE` | Normal | Foreground service type for the MCP server |
-| `FOREGROUND_SERVICE_LOCATION` | Normal | Foreground service type for the Event Channel (geofence/WiFi) |
-| `RECEIVE_BOOT_COMPLETED` | Normal | Auto-start the server on device boot |
-| `QUERY_ALL_PACKAGES` | Normal | Enumerate installed apps for app-management tools |
-| `KILL_BACKGROUND_PROCESSES` | Normal | Stop background apps via app-management tools |
-| `ACCESS_WIFI_STATE` | Normal | Read WiFi state for the Event Channel |
-| `CHANGE_WIFI_STATE` | Normal | Manage WiFi for the Event Channel |
-| `POST_NOTIFICATIONS` | Runtime | Show the foreground service notification (Android 13+) |
-| `CAMERA` | Runtime | Camera photo/video MCP tools |
-| `RECORD_AUDIO` | Runtime | Audio capture for camera video tools |
-| `ACCESS_FINE_LOCATION` | Runtime | Location tools and geofence events |
-| `ACCESS_COARSE_LOCATION` | Runtime | Approximate location |
-| `ACCESS_BACKGROUND_LOCATION` | Runtime | Location/geofence events while the app is in the background |
-| `NEARBY_WIFI_DEVICES` | Runtime | WiFi scanning for the Event Channel (Android 13+) |
-| `READ_MEDIA_IMAGES` | Runtime | "All files" mode for built-in image storage locations (Android 13+) |
-| `READ_MEDIA_VIDEO` | Runtime | "All files" mode for built-in video storage locations (Android 13+) |
-| `READ_MEDIA_AUDIO` | Runtime | "All files" mode for built-in audio storage locations (Android 13+) |
-| Accessibility Service | Special access | UI introspection, action execution, and screenshots — **required** for core functionality |
-| Notification Listener | Special access | Reading and managing notifications via notification tools |
-
----
-
-## Connect
-
-### Claude Desktop / Claude Code
-
-Add the server to your `.mcp.json` configuration file:
-
-```json
-{
-  "mcpServers": {
-    "android-phone": {
-      "type": "http",
-      "url": "http://DEVICE_IP:PORT/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_TOKEN"
-      }
-    }
-  }
-}
-```
-
-Replace `DEVICE_IP`, `PORT`, and `YOUR_TOKEN` with the values shown in the app's Server tab. If the server is bound to localhost (default), you'll need [adb port forwarding](#using-with-adb-port-forwarding) or a [remote access tunnel](#using-remote-access-tunnels) to connect.
-
-> **Note for clients without custom-header support:** if your MCP client cannot send an `Authorization` header and does not support OAuth, you can turn off both auth methods in the app (**Settings → Access** — disable Bearer token and OAuth). The app warns and asks you to confirm, because the server is then **open**: anyone who can reach it has full control. Only do this on a network you trust.
-
-### Connect from Claude.ai & Claude Desktop (Custom Connector, OAuth)
-
-Claude.ai (web) and Claude Desktop connect as a **custom connector** (remote MCP) using OAuth 2.1 — the app is its own OAuth Authorization Server, so no external account or pre-registration is needed. This requires the server to be reachable over a **public HTTPS URL**, so you must first enable a [remote access tunnel](#using-remote-access-tunnels) — a `localhost`/LAN address or `adb` port-forward will **not** work.
-
-1. **OAuth is enabled by default** — no action needed (if you previously disabled it, re-enable it under **Settings → Access**). The bearer token stays enabled too; both are accepted.
-2. Open **Settings → Tunnel**, enable **Remote Access** (Cloudflare Quick Tunnels needs no account), and start the server. Copy the public `https://…` URL from the Server tab and append `/mcp` (e.g. `https://your-tunnel.trycloudflare.com/mcp`).
-3. In Claude, open **[Customize → Connectors → Add custom connector](https://claude.ai/customize/connectors?modal=add-custom-connector)**, paste the `https://…/mcp` URL, and **leave the OAuth Client ID and Client Secret blank** (the app uses Dynamic Client Registration). Click **Add**.
-4. Claude opens a browser approval page showing a **2-digit code**. On the device, a heads-up notification appears — tap it to open the in-app approval screen, confirm the code matches, and **Approve**.
-5. Manage or revoke connected clients any time under **Settings → Access → Connected clients**. Revoking immediately invalidates that client's tokens.
-
-> **Public URL override (optional):** if your tunnel/host topology needs a fixed public host (or you bind to `0.0.0.0` without a trusted proxy), set a **Public URL override** in Settings → Access so OAuth metadata and links use a stable host.
-
-Custom connectors are available on the Free (1 connector), Pro, Max, Team, and Enterprise plans (currently in beta).
-
-> ⚠️ **Security:** treat the public tunnel URL as sensitive, approve only connections you initiated (verify the 2-digit code), revoke clients you no longer use, and stop the tunnel and server when you are done. Never point it at a device holding sensitive data.
-
-### Other MCP Clients
-
-The MCP server exposes a standard Streamable HTTP endpoint at `/mcp` with combined authentication (static bearer token and/or OAuth 2.1). Any MCP-compatible client can connect to it — refer to your client's documentation for the specific configuration format.
-
-### Testing with MCP Inspector
-
-[MCP Inspector](https://github.com/modelcontextprotocol/inspector) is the official visual testing tool for MCP servers. It provides a browser-based UI to connect, list tools, fill parameters, and see responses:
-
-```bash
-npx @modelcontextprotocol/inspector
-```
-
-This opens a UI at `http://localhost:6274` where you can connect to your server and test tools interactively.
-
-### Testing with curl
-
-All requests are sent as JSON-RPC 2.0 via `POST /mcp` (Streamable HTTP transport). The server requires a session initialization handshake before tool calls:
-
-```bash
-# Initialize a session (required before any tool call)
-# Capture the mcp-session-id from the response headers
-curl -s -D- -X POST http://localhost:8080/mcp \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"curl-client","version":"1.0.0"}}}'
-
-# Use the mcp-session-id from the response headers in all subsequent requests
-
-# List available tools
-curl -X POST http://localhost:8080/mcp \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: SESSION_ID" \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
-
-# Get the current screen state (UI nodes + optional screenshot)
-curl -X POST http://localhost:8080/mcp \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: SESSION_ID" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"android_get_screen_state","arguments":{}}}'
-
-# Tap at coordinates
-curl -X POST http://localhost:8080/mcp \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: SESSION_ID" \
-  -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"android_tap","arguments":{"x":540,"y":1200}}}'
-```
-
-Replace `SESSION_ID` with the `mcp-session-id` value from the initialize response headers.
-
-The bearer token is shown in the app's connection info and can be copied directly. Bearer authentication is controlled by the **Bearer token** toggle in **Settings → Access** (not by clearing the value): with it enabled, every `/mcp` request must present the token (or a valid OAuth access token). The server accepts unauthenticated requests only when **both** the Bearer token and OAuth are disabled.
-
----
-
-## Configuration
-
-### Server Settings (via App UI)
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Port | `8080` | HTTP/HTTPS server port |
-| Binding Address | `127.0.0.1` | `127.0.0.1` (localhost, use with adb port forwarding) or `0.0.0.0` (network, all interfaces) |
-| Bearer Token | Enabled, auto-generated UUID | Static token for MCP requests (Settings → Access). Enforcement is set by the Bearer toggle, not by clearing the value. |
-| OAuth | Enabled | Self-contained OAuth 2.1 server for Claude.ai / Claude Desktop custom connectors (Settings → Access). |
-| Public URL override | Empty (auto-detect) | Pin the public host used for OAuth metadata and share links. |
-| HTTPS | Disabled | Enable HTTPS with auto-generated self-signed certificate (configurable hostname) or upload custom .p12/.pfx |
-| Auto-start on Boot | Disabled | Start MCP server automatically when device boots |
-| Device Slug | Empty | Optional device identifier for tool name prefix (e.g., `pixel7` makes tools `android_pixel7_tap`) |
-| Remote Access Tunnel | Disabled | Expose server via public HTTPS URL (Cloudflare Quick Tunnels or ngrok) |
-| Tool Permissions | All enabled | Per-tool and per-parameter enable/disable (Settings > MCP Tools) |
-| File Size Limit | 50 MB | Maximum file size for file operations (range 1-500 MB) |
-| Allow HTTP Downloads | Disabled | Allow non-HTTPS downloads via `android_download_from_url` |
-| Download Timeout | 60 seconds | Timeout for file downloads (range 10-300 seconds) |
-
-### Using with adb Port Forwarding
-
-When the server is bound to `127.0.0.1` (default, most secure):
-
-```bash
-# Forward device port to host
-adb forward tcp:8080 tcp:8080
-
-# Test connection from host
-curl -X POST http://localhost:8080/mcp \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"ping"}'
-```
-
-### Using over Network
-
-When the server is bound to `0.0.0.0`:
-
-1. Find the device's IP address (shown in the app's connection info)
-2. Connect directly via `POST http://DEVICE_IP:8080/mcp` with bearer token
-
-**Warning**: Binding to `0.0.0.0` exposes the server to all devices on the same network. Only use on trusted private networks.
-
-### Using Remote Access Tunnels
-
-For connecting from outside the local network without port forwarding:
-
-1. **Cloudflare Quick Tunnels** (default, no account required): Creates a temporary tunnel with a random `*.trycloudflare.com` HTTPS URL.
-2. **ngrok** (account required): Supports optional custom domains. Requires an ngrok authtoken (free tier available). Available on arm64-v8a and x86_64 devices.
-
-Enable the tunnel in the app's "Remote Access" section. The public URL is displayed in the connection info and server logs.
-
-### Headless Setup via ADB
-
-The app can be fully configured and controlled from the command line without opening the UI. This is useful for automated setups, CI pipelines, or headless devices.
-
-Replace `<app-id>` with the application ID for your build:
-- **Debug**: `com.danielealbano.androidremotecontrolmcp.debug`
-- **Release**: `com.danielealbano.androidremotecontrolmcp`
-
-#### Grant Permissions
-
-```bash
-# Enable Accessibility Service (required for UI introspection, actions, and screenshots)
-adb shell settings put secure enabled_accessibility_services \
-  <app-id>/com.danielealbano.androidremotecontrolmcp.services.accessibility.McpAccessibilityService
-
-# Enable Notification Listener Service (required for notification tools)
-adb shell cmd notification allow_listener \
-  <app-id>/com.danielealbano.androidremotecontrolmcp.services.notifications.McpNotificationListenerService
-
-# Grant notification permission (Android 13+)
-adb shell pm grant <app-id> android.permission.POST_NOTIFICATIONS
-
-# Grant camera permission
-adb shell pm grant <app-id> android.permission.CAMERA
-
-# Grant microphone permission
-adb shell pm grant <app-id> android.permission.RECORD_AUDIO
-
-# Grant location permissions
-adb shell pm grant <app-id> android.permission.ACCESS_FINE_LOCATION
-adb shell pm grant <app-id> android.permission.ACCESS_COARSE_LOCATION
-adb shell pm grant <app-id> android.permission.ACCESS_BACKGROUND_LOCATION
-
-# Grant nearby WiFi devices permission (Android 13+)
-adb shell pm grant <app-id> android.permission.NEARBY_WIFI_DEVICES
-
-# Grant media read permissions (Android 13+)
-adb shell pm grant <app-id> android.permission.READ_MEDIA_IMAGES
-adb shell pm grant <app-id> android.permission.READ_MEDIA_VIDEO
-adb shell pm grant <app-id> android.permission.READ_MEDIA_AUDIO
-```
-
-See [docs/PERMISSIONS.md](docs/PERMISSIONS.md) for the full reference and a copy-paste script that grants everything in one go.
-
-#### Configure the App
-
-All extras are optional — only the ones provided are updated. The app does **not** need to be open.
-
-```bash
-adb shell am broadcast \
-  -a com.danielealbano.androidremotecontrolmcp.ADB_CONFIGURE \
-  -n <app-id>/com.danielealbano.androidremotecontrolmcp.services.mcp.AdbConfigReceiver \
-  --es bearer_token "my-secret-token" \
-  --es binding_address "0.0.0.0" \
-  --ei port 8080 \
-  --ez auto_start_on_boot true \
-  --ez https_enabled false \
-  --es certificate_source "AUTO_GENERATED" \
-  --es certificate_hostname "mcp.local" \
-  --ez tunnel_enabled false \
-  --es tunnel_provider "CLOUDFLARE" \
-  --es ngrok_authtoken "your-ngrok-token" \
-  --es ngrok_domain "your-domain.ngrok-free.app" \
-  --ei file_size_limit_mb 50 \
-  --ez allow_http_downloads false \
-  --ez allow_unverified_https_certs false \
-  --ei download_timeout_seconds 60 \
-  --es device_slug "pixel8" \
-  --es tool_permissions '{"disabled_tools":["tap"],"disabled_params":{"swipe":["duration_ms"]}}'
-```
-
-```bash
-# Disable bearer authentication (use only on trusted networks; the server is open
-# only if OAuth is also disabled — see the Security section)
-adb shell am broadcast \
-  -a com.danielealbano.androidremotecontrolmcp.ADB_CONFIGURE \
-  -n <app-id>/com.danielealbano.androidremotecontrolmcp.services.mcp.AdbConfigReceiver \
-  --ez bearer_token_enabled false
-```
-
-Bearer enforcement is controlled by `--ez bearer_token_enabled <bool>`, NOT by clearing the value. Clearing the value (`--es bearer_token ""`) while `bearer_token_enabled=true` makes `/mcp` fail CLOSED (401) — it does NOT open the server. The server accepts unauthenticated requests only when BOTH `bearer_token_enabled` and `oauth_enabled` are false.
-
-| Extra | Type | Description |
-|-------|------|-------------|
-| `bearer_token` | string | Static bearer-token value (clearing it while `bearer_token_enabled=true` fails closed, it does NOT disable auth) |
-| `bearer_token_enabled` | boolean | Enable/disable bearer-token authentication (controls enforcement, independent of the value) |
-| `oauth_enabled` | boolean | Enable/disable the self-contained OAuth 2.1 server (Claude.ai / Claude Desktop connectors) |
-| `public_url_override` | string | Pin the public host used for OAuth metadata and share links (empty = auto-detect from the request) |
-| `binding_address` | string | `127.0.0.1` (localhost) or `0.0.0.0` (network) |
-| `port` | int | HTTP/HTTPS server port (1-65535) |
-| `auto_start_on_boot` | boolean | Start MCP server when device boots |
-| `https_enabled` | boolean | Enable HTTPS with TLS |
-| `certificate_source` | string | `AUTO_GENERATED` or `CUSTOM` |
-| `certificate_hostname` | string | Hostname for auto-generated certificate |
-| `tunnel_enabled` | boolean | Enable remote access tunnel |
-| `tunnel_provider` | string | `CLOUDFLARE` or `NGROK` |
-| `ngrok_authtoken` | string | ngrok authentication token |
-| `ngrok_domain` | string | ngrok custom domain (optional) |
-| `file_size_limit_mb` | int | Max file size for file operations (1-500) |
-| `allow_http_downloads` | boolean | Allow non-HTTPS downloads |
-| `allow_unverified_https_certs` | boolean | Allow unverified HTTPS certificates for downloads |
-| `download_timeout_seconds` | int | Download timeout (10-300) |
-| `device_slug` | string | Device identifier for tool name prefix |
-| `tool_permissions` | string (JSON) | Per-tool and per-parameter permissions: `{"disabled_tools":["tool_name"],"disabled_params":{"tool_name":["param"]}}` |
-
-#### Start the MCP Server
-
-The server must be started via a trampoline Activity (required on Android 12+ to gain foreground service exemption). This works even when the app is force-stopped.
-
-```bash
-adb shell am start \
-  -n <app-id>/com.danielealbano.androidremotecontrolmcp.services.mcp.AdbServiceTrampolineActivity \
-  --es action start
-```
-
-#### Stop the MCP Server
-
-```bash
-adb shell am start \
-  -n <app-id>/com.danielealbano.androidremotecontrolmcp.services.mcp.AdbServiceTrampolineActivity \
-  --es action stop
-```
-
----
-
-## Security
-
-### No Root Required
-
-The application runs entirely within Android's standard permission model. No root access, no unlocked bootloader, no custom ROM required.
-
-### Authentication
-
-Authentication is combined (dual-accept): a `/mcp` request is authorized by a valid static bearer token OR a valid issued OAuth access token. Enforcement is controlled by two independent toggles in **Settings → Access** — `bearer_token_enabled` (default on) and `oauth_enabled` (default on) — not by the token value. The bearer token is auto-generated once on first launch (UUID, preserved across app upgrades) and can be viewed, copied, or regenerated in the app. Clearing the value while bearer is enabled makes the server fail CLOSED (401). The server accepts unauthenticated requests only when BOTH toggles are off (the app shows a warning and a confirmation before that happens) — see the security note in the Connect section.
-
-### Network Security
-
-- **Default binding `127.0.0.1`**: Only accessible via adb port forwarding or tunnels (most secure)
-- **Optional binding `0.0.0.0`**: Accessible over network (use only on trusted networks; security warning displayed when enabling)
-- **HTTPS**: Optional, disabled by default. When enabled, uses auto-generated self-signed certificates or upload your own CA-signed certificate. Certificate is stored in app-private storage.
-
-### Permissions
-
-All permissions are managed from the app's Settings > Permissions tab. Every sensitive permission requires explicit user action — nothing is granted silently.
-
-Storage locations are configured in Settings > Storage, which includes automatic locations (e.g., Downloads) and custom locations authorized via the system file picker.
-
----
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build requirements, testing, architecture, and development conventions.
-
----
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE.md](LICENSE.md) for details.
+GoBal is MIT-licensed. Its MCP server and accessibility foundation are derived from [Android Remote Control MCP](https://github.com/danielealbano/android-remote-control-mcp) by Daniele Salvatore Albano (MIT); that copyright notice is kept in LICENSE.md.
