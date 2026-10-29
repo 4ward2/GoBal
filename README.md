@@ -18,9 +18,13 @@
 
 ## 为什么做狗宝
 
-手机上的很多事并不难，只是步骤多、界面绕：比价下单、查快递、填表、找一条旧聊天记录。对不熟悉智能手机的人来说，每一步都可能卡住；对熟练的人来说，重复操作也很耗时间。
+狗宝想做的事和 [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse) 一样：**你说一句话，它替你把事办完。** 不同的是，狗宝主打**科技平权、人文关怀**：
 
-狗宝直接“看”手机屏幕的无障碍树，像人一样点按、输入、滑动，把一句自然语言变成一串真实的操作。它不需要 root，不需要被操作的 App 做任何适配，面向各年龄群体。
+- **跑在你自己的手机上。** 不需要电脑、不需要 ADB 连线，也不需要把任务交给云端虚拟机；它直接操作你手机里的真实 App，包括只在国内提供的 App。
+- **面向各年龄群体，尤其照顾不会用手机的人。** 中老年人、不识字的用户只要开口说话，狗宝就能替他们点按、输入、跑完流程；熟练的人也能把重复操作交给它。
+- **模型由你决定。** 可以接任意云端大模型，也可以把模型下载到手机里完全离线运行。
+- **私密信息不交给 AI。** 电话、地址等存在加密保险箱，Agent 只看到占位符；付款、验证码、登录始终由本人完成。
+- **完全开源。** MIT 许可，代码、数据流和权限都可以审计。
 
 ## 它能做什么
 
@@ -56,6 +60,24 @@
 - 自动读取短信验证码并填入当前输入框。
 - 自动跳过 App 的开屏广告。
 - 角色卡：给狗宝换个性格和说话风格。
+
+## 和同类产品比较
+
+下表依据各项目 2026 年 10 月的公开资料整理，如有出入以各项目官方说明为准。
+
+| | **狗宝 GoBal** | [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse) | [Open-AutoGLM](https://github.com/zai-org/Open-AutoGLM) | [DroidRun](https://github.com/droidrun/droidrun) | [Mobile-Agent](https://github.com/X-PLUG/MobileAgent) | [UI-TARS](https://github.com/bytedance/UI-TARS) |
+|---|---|---|---|---|---|---|
+| 形态 | 手机 App | 云端个人智能体（App、网页、WhatsApp） | 电脑端框架 | 电脑端框架 | 研究框架 | 视觉语言模型 |
+| 开源许可 | MIT | 闭源 | Apache-2.0 | MIT | MIT | Apache-2.0 |
+| 在哪里执行 | 手机本机，免 root | 云端安全虚拟机里的浏览器 | 电脑经 ADB / HDC 控制手机 | 电脑经 ADB + Portal App 控制手机 | 自建部署或云手机 | 需自行部署算力 |
+| 需要电脑 | 不需要 | 不需要 | 需要 | 需要（或其云服务） | 未说明 | 需要推理服务器 |
+| 模型 | 9 家云端预置、任意 OpenAI 兼容接口、端侧 GGUF 离线 | Meta 自有 | AutoGLM-Phone-9B（OpenAI 兼容接口） | 多家云端，含 Ollama | GUI-Owl 系列 | UI-TARS 自身 |
+| 完全离线 | 支持，模型跑在手机上（llama.cpp） | 不支持 | 需自建 GPU 服务器 | 未说明 | 需自建推理服务 | 需自建推理服务 |
+| 私密信息 | 加密保险箱，Agent 只见占位符，使用需审批 | 称 Agent 看不到密码和支付信息，一次性卡号付款 | 敏感操作确认，登录和验证码人工接管 | 未说明 | 未说明 | — |
+| 操作固化与复用 | 成功操作自动固化为脚本；可人工录制、回放、编排 | 未说明 | 未说明 | 可回放宏 | 未说明 | — |
+| 可用地区 | 不限 | 美国 | 不限 | 不限 | 不限 | 不限 |
+
+狗宝的定位，是把这些项目里“能办事的 Agent”直接装进每个人的手机：不依赖电脑和云端虚拟机，也不绑定某一家的模型。
 
 ## 架构一览
 
@@ -140,7 +162,7 @@ python scripts/fetch_sherpa_onnx.py   # 下载并校验固定版本的语音运�
 
 ## English
 
-**GoBal (狗宝)** is a no-root Android GUI agent. It reads the accessibility tree and taps, types and swipes like a person, turning one sentence into real actions in any app.
+**GoBal (狗宝)** aims at what [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse) does, getting things done for you from one sentence, but it runs on your own phone, is open source (MIT), works with any model including fully offline ones, and is designed first for people who struggle with smartphones. It reads the accessibility tree and taps, types and swipes like a person in any real app, with no PC, ADB or cloud VM required.
 
 - **Agent:** long tasks are managed as a task tree; search-style tasks remember explored branches so the agent neither loops nor invents results. Guards hand payments, captchas and logins back to you, and only apps you have allowed are touched.
 - **Scripts:** actions the agent completed are turned into replayable scripts. You can also record a demonstration yourself, then replay, edit and compose scripts. Targets are matched by text, OCR, image features and screen signatures.
