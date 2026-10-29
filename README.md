@@ -63,21 +63,20 @@
 
 ## 和同类产品比较
 
-下表依据各项目 2026 年 10 月的公开资料整理，如有出入以各项目官方说明为准。
+下表依据各项目 2026 年 10 月的公开资料整理，如有出入以各项目官方说明为准。“未说明”表示官方资料没有提到。
 
-| | **狗宝 GoBal** | [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse) | [Open-AutoGLM](https://github.com/zai-org/Open-AutoGLM) | [DroidRun](https://github.com/droidrun/droidrun) | [Mobile-Agent](https://github.com/X-PLUG/MobileAgent) | [UI-TARS](https://github.com/bytedance/UI-TARS) |
+| 产品 | 形态与开源 | 在哪里执行 | 模型 | 手机端离线 | 私密信息 | 操作复用 |
 |---|---|---|---|---|---|---|
-| 形态 | 手机 App | 云端个人智能体（App、网页、WhatsApp） | 电脑端框架 | 电脑端框架 | 研究框架 | 视觉语言模型 |
-| 开源许可 | MIT | 闭源 | Apache-2.0 | MIT | MIT | Apache-2.0 |
-| 在哪里执行 | 手机本机，免 root | 云端安全虚拟机里的浏览器 | 电脑经 ADB / HDC 控制手机 | 电脑经 ADB + Portal App 控制手机 | 自建部署或云手机 | 需自行部署算力 |
-| 需要电脑 | 不需要 | 不需要 | 需要 | 需要（或其云服务） | 未说明 | 需要推理服务器 |
-| 模型 | 9 家云端预置、任意 OpenAI 兼容接口、端侧 GGUF 离线 | Meta 自有 | AutoGLM-Phone-9B（OpenAI 兼容接口） | 多家云端，含 Ollama | GUI-Owl 系列 | UI-TARS 自身 |
-| 完全离线 | 支持，模型跑在手机上（llama.cpp） | 不支持 | 需自建 GPU 服务器 | 未说明 | 需自建推理服务 | 需自建推理服务 |
-| 私密信息 | 加密保险箱，Agent 只见占位符，使用需审批 | 称 Agent 看不到密码和支付信息，一次性卡号付款 | 敏感操作确认，登录和验证码人工接管 | 未说明 | 未说明 | — |
-| 操作固化与复用 | 成功操作自动固化为脚本；可人工录制、回放、编排 | 未说明 | 未说明 | 可回放宏 | 未说明 | — |
-| 可用地区 | 不限 | 美国 | 不限 | 不限 | 不限 | 不限 |
+| **狗宝 GoBal** | 手机 App，MIT | 手机本机，免 root，读无障碍树操作真实 App，不需要电脑 | 9 家云端预置、任意 OpenAI 兼容接口、端侧 GGUF | 支持（llama.cpp） | 加密保险箱，Agent 只见占位符，使用需审批；付款、验证码、登录交给本人 | 成功操作自动固化为脚本；可人工录制、回放、编排；多规则匹配 |
+| [豆包手机](https://tech.ifeng.com/c/8xDQi6fLfER) | 系统级助手，闭源 | 预装于努比亚 M153、NaviX Ultra，系统级权限 | 豆包自有 | 未说明 | 第三方 App 可按 SAEP 协议拒绝被操作，据报道微信、QQ、淘宝、支付宝、美团等在拒绝名单 | 未说明 |
+| [Meta Muse](https://about.fb.com/news/2026/09/introducing-muse) | 云端个人智能体，闭源 | 云端安全虚拟机里的浏览器；手机 App 只是入口，仅限美国 | Meta 自有 | 不支持 | 称 Agent 看不到密码和支付信息，一次性卡号付款 | 未说明 |
+| [nanoMuse](https://github.com/nano-muse/nanoMuse)（浙江大学） | 多端个人智能体，GPL-3.0 | 手机本机运行 Agent，优先用 API 和技能，屏幕操作为最后手段，逐步截屏；跨设备同步需中继 | 任意 OpenAI 兼容接口（约 25 家） | 未提供 | 审批守门与数据流向追踪；密码、验证码由本人输入 | 支持技能；操作轨迹可回看，不能回放 |
+| [Open-AutoGLM](https://github.com/zai-org/Open-AutoGLM)（智谱） | 框架，Apache-2.0 | 电脑经 ADB / HDC 控制手机 | AutoGLM-Phone-9B，OpenAI 兼容接口 | 需自建 GPU 服务器 | 敏感操作确认，登录和验证码人工接管 | 未说明 |
+| [DroidRun](https://github.com/droidrun/droidrun) | 框架，MIT | 电脑经 ADB + Portal App 控制手机（或其云服务） | 多家云端，含 Ollama | 未说明 | 未说明 | 可回放宏 |
+| [Mobile-Agent](https://github.com/X-PLUG/MobileAgent)（阿里） | 研究框架，MIT | 自建部署或云手机 | GUI-Owl 系列 | 需自建推理服务 | 未说明 | 未说明 |
+| [UI-TARS](https://github.com/bytedance/UI-TARS)（字节） | 视觉语言模型，Apache-2.0 | 需自行部署推理服务，无安卓端 App | UI-TARS 自身 | 需自建推理服务 | — | — |
 
-狗宝的定位，是把这些项目里“能办事的 Agent”直接装进每个人的手机：不依赖电脑和云端虚拟机，也不绑定某一家的模型。
+狗宝的定位，是把“能办事的 Agent”直接装进每个人自己的手机：不挑机型，不依赖电脑和云端虚拟机，也不绑定某一家的模型。和所有通过屏幕或无障碍操作 App 的方案一样，个别 App 可能会限制自动化操作，这类步骤狗宝会交还给你本人完成。
 
 ## 架构一览
 
